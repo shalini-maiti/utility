@@ -6,8 +6,8 @@ import numpy as np
 
 # Use json folder(labels ) to get the list from directory
 
-file_list_imgs = '/data3/datasets/mano_imagenet_vert_colour_2/TRAINRight.txt'
-img_folder = '/data3/datasets/mano_imagenet_vert_colour_2/TRAIN/labels'
+file_list_imgs = '/data3/datasets/mano_arm_skin_color_8/TRAINRight.txt'
+img_folder = '/data3/datasets/mano_arm_skin_color_8/TRAIN/labels'
 
 f = open(file_list_imgs, 'a')
 

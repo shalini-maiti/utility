@@ -5,18 +5,23 @@ import shutil
 import numpy as np
 import random
 
-json_files_path = "/data3/datasets/mano_imagenet_vert_colour_2/TOTAL/labels/"
-image_files_path = "/data3/datasets/mano_imagenet_vert_colour_2/TOTAL/images/"
+json_files_path = "/data3/datasets/mano_arm_skin_color_8/TOTAL/labels/"
+image_files_path = "/data3/datasets/mano_arm_skin_color_8/TOTAL/images/"
 
 
-output_test_img_path = "/data3/datasets/mano_imagenet_vert_colour_2/TEST/images/"
-output_test_json_path = "/data3/datasets/mano_imagenet_vert_colour_2/TEST/labels/"
+output_test_img_path = "/data3/datasets/mano_arm_skin_color_8/TEST/images/"
+output_test_json_path = "/data3/datasets/mano_arm_skin_color_8/TEST/labels/"
 
-output_train_img_path = "/data3/datasets/mano_imagenet_vert_colour_2/TRAIN/images/"
-output_train_json_path = "/data3/datasets/mano_imagenet_vert_colour_2/TRAIN/labels/"
+output_train_img_path = "/data3/datasets/mano_arm_skin_color_8/TRAIN/images/"
+output_train_json_path = "/data3/datasets/mano_arm_skin_color_8/TRAIN/labels/"
 
 total_number = 102000
 train_number = 100000
+#total_number = 62000
+#train_number = 62000
+#total_number = 93000
+#train_number = 93000
+
 test_number = total_number - train_number
 
 json_all = [f for f in glob.glob(json_files_path + "*.json")]
@@ -44,6 +49,7 @@ img_files = [f.split("/")[6][:-4] for f in glob.glob(image_files_path + "*.png")
 print(np.array(img_files))
 
 # TRAIN
+
 for img_name in img_names_train:
     #print(image_files_path + img_name + ".png")
     src1 = image_files_path + img_name + ".png"
