@@ -5,18 +5,18 @@ import shutil
 import numpy as np
 import random
 
-json_files_path = "/data3/datasets/mano_arm_skin_color_8/TOTAL/labels/"
-image_files_path = "/data3/datasets/mano_arm_skin_color_8/TOTAL/images/"
+json_files_path = "/data3/datasets/mano_arm_imagenet_vert_colour_and_bg_10_b_complete/TOTAL/labels/"
+image_files_path = "/data3/datasets/mano_arm_imagenet_vert_colour_and_bg_10_b_complete/TOTAL/images/"
 
 
-output_test_img_path = "/data3/datasets/mano_arm_skin_color_8/TEST/images/"
-output_test_json_path = "/data3/datasets/mano_arm_skin_color_8/TEST/labels/"
+output_test_img_path = "/data3/datasets/mano_arm_imagenet_vert_colour_and_bg_10_b_complete/TEST/images/"
+output_test_json_path = "/data3/datasets/mano_arm_imagenet_vert_colour_and_bg_10_b_complete/TEST/labels/"
 
-output_train_img_path = "/data3/datasets/mano_arm_skin_color_8/TRAIN/images/"
-output_train_json_path = "/data3/datasets/mano_arm_skin_color_8/TRAIN/labels/"
+output_train_img_path = "/data3/datasets/mano_arm_imagenet_vert_colour_and_bg_10_b_complete/TRAIN/images/"
+output_train_json_path = "/data3/datasets/mano_arm_imagenet_vert_colour_and_bg_10_b_complete/TRAIN/labels/"
 
-total_number = 102000
-train_number = 100000
+total_number = 49200
+train_number = 48500
 #total_number = 62000
 #train_number = 62000
 #total_number = 93000

@@ -14,18 +14,24 @@ import random
 import json
 import time
 
-total_number = 62000
+total_number = 100000
 #total_number = 620
-number_of_datasets = 2
+number_of_datasets = 4
 ratio = np.ones((number_of_datasets, ))
-ratio = 0.5*ratio
+ratio = ratio/number_of_datasets
 
-dataset_images_addrs = ['/data3/datasets/mano_homogeneous_vert_colour/mano_json_729/TRAIN/', 
-                        '/data3/datasets/mano_imagenet_vert_colour_2/TOTAL/images/']
-dataset_labels_addrs = ['/data3/datasets/mano_homogeneous_vert_colour/mano_json_729/TRAIN/', 
-                        '/data3/datasets/mano_imagenet_vert_colour_2/TOTAL/labels/']
-output_images_addr =  '/data3/datasets/mano_imagenet_homo_vert_mixed_4/TOTAL/images/'
-output_labels_addr = '/data3/datasets/mano_imagenet_homo_vert_mixed_4/TOTAL/labels/'
+dataset_images_addrs = ['/data3/datasets/mano_homogeneous_vert_colour/mano_json_729/TRAIN/',
+                        '/data3/datasets/mano_imagenet_vert_colour_2/TOTAL/images/'
+                        '/data3/datasets/mano_arm_skin_color_8b_feasible_complete/TOTAL/images/', 
+                        '/data3/datasets/mano_arm_imagenet_vert_colour_9_b_complete/TOTAL/images/'
+                        ]
+dataset_labels_addrs = ['/data3/datasets/mano_homogeneous_vert_colour/mano_json_729/TRAIN/',
+                        '/data3/datasets/mano_imagenet_vert_colour_2/TOTAL/labels/',
+                        '/data3/datasets/mano_arm_skin_color_8b_feasible_complete/TOTAL/labels/',
+                        '/data3/datasets/mano_arm_imagenet_vert_colour_9_b_complete/TOTAL/labels/'
+                        ]
+output_images_addr =  '/data3/datasets/mano_imagenet_homo_vert_all_mixed_arm_14/TOTAL/images/'
+output_labels_addr = '/data3/datasets/mano_imagenet_homo_vert_all_mixed_arm_14/TOTAL/labels/'
 
 
 ratio_of_division = ratio*total_number
@@ -37,6 +43,7 @@ for idx, dset_path in enumerate(dataset_labels_addrs):
     json_all = [f for f in glob.glob(dset_path + "*.json")]
     print('size',len(json_all))
     print('ration', ratio_of_division[idx])
+    print(len(json_all))
     json_files = random.sample(json_all, int(ratio_of_division[idx]))
     img_names_ = [f.split("/")[6][:-5] for f in json_files]
     print("dset_path", dset_path)
@@ -50,6 +57,7 @@ for idx, dset_path in enumerate(dataset_labels_addrs):
         #print(json_files_path + img_name + ".json")
         src2 = dataset_labels_addrs[idx] + img_name + ".json"
         print(idx == 0)
+        '''
         if(idx == 0):
             with open(src2, 'r') as f:
                 time.sleep(1)
@@ -63,7 +71,8 @@ for idx, dset_path in enumerate(dataset_labels_addrs):
             
             with open(src2, 'w') as f:
                 json.dump(tmp, f)
-                
+        '''
+              
         dest2 = output_labels_addr + '/' + str(idx) + img_name + ".json"
         print("Img name", img_name)
         
@@ -73,5 +82,4 @@ for idx, dset_path in enumerate(dataset_labels_addrs):
             shutil.copy(src1, dest1)
             shutil.copy(src2, dest2)
             
-    
     
