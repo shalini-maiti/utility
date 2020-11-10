@@ -14,10 +14,10 @@ import numpy as np
 input_img_folder = '/data3/datasets/000mano_full_arm_homo_vert_colour/TOTAL/images/'
 input_label_folder='/data3/datasets/000mano_full_arm_homo_vert_colour/TOTAL/labels/'
 
-output_img_folder ='/data3/datasets/mano_homo_vert_cropped_to_eightpercent_15/TOTAL/images/'
-output_label_folder='/data3/datasets/mano_homo_vert_cropped_to_eightpercent_15/TOTAL/labels/'
+output_img_folder ='/data3/datasets/mano_homo_vert_cropped_fromm000_30/TOTAL/images/'
+output_label_folder='/data3/datasets/mano_homo_vert_cropped_fromm000_30/TOTAL/labels/'
 
-crop_ratio = 0.7
+crop_ratio = 0.5
 resize_ratio = 1/crop_ratio
 '''
 def read_and_modify_json_file(input_label_file, ratio, output_label_file):
@@ -76,7 +76,7 @@ def crop_image(input_img_file, crop_ratio, resize_ratio, output_img_file, input_
 
     cv2.imwrite(output_img_file, resized_img)
     #cv2.waitKey(0)
-    #assert False
+    assert False
     pass
 
 def main():

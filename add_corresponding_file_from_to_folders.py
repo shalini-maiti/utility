@@ -15,30 +15,32 @@ import cv2
 
 
 # For freihands seg masks corresponding to the test images
-'''
-input_fil_dir='/data3/datasets/freihands_cleaned/images/'
-corresponding_file_dir = '/data3/datasets/FreiHAND_pub_v2/training/mask/'
-output_folder = '/data3/datasets/freihands_cleaned/masks/'
-'''
 
+input_fil_dir='/data3/datasets/FreiHAND_pub_v2/FreihandsTrainData/images_with_obj/'
+corresponding_file_dir = '/data3/datasets/FreiHAND_pub_v2/FreihandsTrainData/labels/'
+output_folder = '/data3/datasets/FreiHAND_pub_v2/FreihandsTrainData/labels_w_obj/'
+
+'''
 input_fil_dir='/data3/datasets/freihands_cleaned/images/'
 corresponding_file_dir = '/data3/datasets/freihands_cleaned/masks/'
 output_folder = '/data3/datasets/freihands_cleaned/masks_/'
-
+'''
 count = 0
 for file in os.listdir(input_fil_dir):
-    if file.endswith('.jpg'):
-    #if file.endswith('.png'):
+    #if file.endswith('.jpg'):
+    if file.endswith('.png'):
         is_valid = False
         fname = file
         count = count + 1
-        print(count, fname)
-        #src1 = corresponding_file_dir + fname[:-4] + '.json'
-        src1 = corresponding_file_dir + fname
-        print(count, src1)
+        #print(count, fname)
+        src1 = corresponding_file_dir + fname[:-4] + '.json'
+        #src1 = corresponding_file_dir + fname
+        
         dest1 = output_folder
         if os.path.exists(src1):
+            print(count, src1)
             shutil.copy(src1, dest1)
+            #shutil.move(src1, dest1)
 
 
 '''
