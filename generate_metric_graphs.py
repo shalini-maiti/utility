@@ -18,8 +18,8 @@ colour_dict = {0: 'darkgray', 1: 'turquoise',
                4: 'deepskyblue', 5:'crimson', 
                6: 'mediumslateblue', 7: 'lightseagreen'}
 metric_dict = {'2DKPE': 0, 'AU2D': 1}
-excel_sheet_path = r'/home/shalini/Downloads/MastersThesisDetails.xlsx'
-sheet_number = 4
+excel_sheet_path = r'/home/shalini/Downloads/AllMetrics.xlsx'
+sheet_number = 1
 
 def ex_code():
     pca = [6, 12]
@@ -198,20 +198,21 @@ def plot_bar_graph(overall_metric, models, datasets, metric_name):
     
     xaxis = np.arange(len(models))
     ax = plt.subplot(1,1,1)
-    width = 1/len(models)
+    width = 1/len(models) - 0.005
     
     ### BAR PLOTS
     for index_ds, ds in enumerate(datasets):
-        ax.bar(xaxis+index_ds*width, overall_metric[:, index_ds, metric_dict[metric_name]], width=width, label=metric_name+ '['+ds+']', color=colour_dict[index_ds])
+        ax.bar(xaxis+(index_ds-3)*width, overall_metric[:, index_ds, metric_dict[metric_name]], width=width, label=metric_name+ '['+ds+']', color=colour_dict[index_ds])
         #ax.bar(xaxis-width, report1_models_freibg_acc, width=width, label='% Accuracy[Freihands With Bg]', color='r')
-        
-    plt.xticks(xaxis + width /2, models, rotation='vertical')
+      
+    print(len(models))
+    plt.xticks(np.arange(len(models)), models, ha="right", rotation=7)
     ax.set_xlabel('Model ID')
     ax.set_ylabel(metric_name)
     ax.set_title(metric_name +' of prediction of Models on different test Datasets.')
     
     
-    ax.legend()
+    ax.legend(loc="best")
     plt.show()
 
     pass
@@ -224,10 +225,10 @@ def plot_line_graph(overall_metric, models, datasets, metric_name):
         ax.plot(models, overall_metric[:, index_ds, metric_dict[metric_name]], label=metric_name+ '['+ds+']', color=colour_dict[index_ds])
         ax.scatter(models, overall_metric[:, index_ds, metric_dict[metric_name]], color=colour_dict[index_ds])
     
-    plt.xticks(models, rotation='vertical')
+    plt.xticks(models, rotation=25)
     ax.set_xlabel('Model ID')
-    ax.set_ylabel(metric_name)
-    ax.set_title(metric_name +' of prediction of Models on different test Datasets.')    
+    ax.set_ylabel(metric_name + '(in pixels)')
+    ax.set_title(metric_name +' of prediction of Models on real test Datasets.')    
     
     ax.legend()
     plt.show()
@@ -249,9 +250,9 @@ def main():
                                                (df["Test Dataset"] == td)]["AU2D"].item()
     
     plot_bar_graph(overall_metric, models, test_datasets, "2DKPE")
-    plot_bar_graph(overall_metric, models, test_datasets, "AU2D")
-    plot_line_graph(overall_metric, models, test_datasets, "2DKPE")
-    plot_line_graph(overall_metric, models, test_datasets, "AU2D")
+    #plot_bar_graph(overall_metric, models, test_datasets, "AU2D")
+    #plot_line_graph(overall_metric, models, test_datasets, "2DKPE")
+    #plot_line_graph(overall_metric, models, test_datasets, "AU2D")
     
     
     

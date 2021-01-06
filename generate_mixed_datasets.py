@@ -69,6 +69,7 @@ dataset_labels_addrs = ['/data3/datasets/multiview_hand_pose_dataset_v2/projecti
 output_images_addr =  '/data3/datasets/multiview_hand_pose_dataset_v2/MultiviewHandPoseAugmentedAll/images'
 output_labels_addr = '/data3/datasets/multiview_hand_pose_dataset_v2/MultiviewHandPoseAugmentedAll/labels'
 '''
+'''
 dataset_images_addrs = ["/data3/datasets/STB/B1Counting/",
                         "/data3/datasets/STB/B2Counting/",
                         "/data3/datasets/STB/B3Counting/",
@@ -83,8 +84,23 @@ dataset_labels_addrs = ["/data3/datasets/STB/B1CountingLabels/",
                         "/data3/datasets/STB/B6CountingLabels/"]
 output_images_addr = "/data3/datasets/STB/allCountingImages" 
 output_labels_addr = "/data3/datasets/STB/allCountingLabels"
-
-
+'''
+dataset_images_addrs = ["/data3/datasets/mano_like_24d_more_images_with_shape_24nd/TRAIN/images/",
+                        "/data3/datasets/mano_like_24d_more_images_with_shape_base_24ne/TRAIN/images/",
+                        "/data3/datasets/mano_like_24d_more_images_with_shape_base_with_tex_24nf/TRAIN/images/",
+                        "/data3/datasets/mano_like_24d_more_images_with_shape_base_with_sp_24nm/TRAIN/images/",
+                        "/data3/datasets/mano_like_24d_more_images_with_shape_base_with_blur_24nj/TRAIN/images/",
+                        "/data3/datasets/mano_lighting_var_shape_param_bg_removed_27i/TRAIN/images/"
+                        ]
+dataset_labels_addrs = ["/data3/datasets/mano_like_24d_more_images_with_shape_24nd/TRAIN/labels/",
+                        "/data3/datasets/mano_like_24d_more_images_with_shape_base_24ne/TRAIN/labels/",
+                        "/data3/datasets/mano_like_24d_more_images_with_shape_base_with_tex_24nf/TRAIN/labels/",
+                        "/data3/datasets/mano_like_24d_more_images_with_shape_base_with_sp_24nm/TRAIN/labels/",
+                        "/data3/datasets/mano_like_24d_more_images_with_shape_base_with_blur_24nj/TRAIN/labels/",
+                        "/data3/datasets/mano_lighting_var_shape_param_bg_removed_27i/TRAIN/labels/"
+                        ]
+output_images_addr = "/data3/datasets/mano_like_24d_more_images_with_shape_all_variatios_with_lighting_24ny/TRAIN/images"
+output_labels_addr = "/data3/datasets/mano_like_24d_more_images_with_shape_all_variatios_with_lighting_24ny/TRAIN/labels"
 ratio_of_division = ratio*total_number
 print(ratio_of_division)
 counter = 0
@@ -99,28 +115,28 @@ for idx, dset_path in enumerate(dataset_images_addrs):
     #json_files = random.sample(json_all, int(ratio_of_division[idx]))
     json_files = json_all
     #json_files = random.sample(json_all, image_per_ds)
-    #img_names_ = [f.split("/")[6][:-4] for f in json_files]
-    img_names_ = [f.split("/")[5][:-4] for f in json_files] # For STB dataset
+    img_names_ = [f.split("/")[-1][:-4] for f in json_files]
+    #img_names_ = [f.split("/")[-1][:-4] for f in json_files] # For STB dataset
 				
     print("dset_path", dset_path)
       
     for img_name in img_names_:
-        img_name = [s for s in img_name.split("_") if s.isdigit()][0] # For STB dataset only, SK_01
+        #img_name = [s for s in img_name.split("_") if s.isdigit()][0] # For STB dataset only, SK_01
         #img_name_num = [s for s in img_name.split("_") if s.isdigit()] # For MHP dataset only, 435_webcam_0
         # Remove above lines if the name is 1098_xxx
         
         counter = counter + 1
         print(counter)
         #print(image_files_path + img_name + ".png")
-        #src1 = dataset_images_addrs[idx] + img_name + ".png" # Other mano type, frei datasets
+        src1 = dataset_images_addrs[idx] + img_name + ".png" # Other mano type, frei datasets
         
         
         #print(json_files_path + img_name + ".json")
-        #src2 = dataset_labels_addrs[idx] + img_name + ".json"
-        #print(idx == 0)
+        src2 = dataset_labels_addrs[idx] + img_name + ".json"
+        print(idx == 0)
         
-        src1 = dataset_images_addrs[idx] +"SK_color_" + img_name + ".png" # For STB dataset
-        src2 = dataset_labels_addrs[idx] +"SK_color_" + img_name + ".json" # For STB dataset
+        #src1 = dataset_images_addrs[idx] +"SK_color_" + img_name + ".png" # For STB dataset
+        #src2 = dataset_labels_addrs[idx] +"SK_color_" + img_name + ".json" # For STB dataset
         
         #src1 = dataset_images_addrs[idx] + img_name_num[0] + "_webcam_" + img_name_num[1] + ".jpg" # For MHP dataset
         #src2 = dataset_labels_addrs[idx] + img_name_num[0] + "_jointsCam_" + img_name_num[1] + ".json" # For MHP dataset
@@ -141,8 +157,13 @@ for idx, dset_path in enumerate(dataset_images_addrs):
         '''
         #dest1 = output_images_addr + '/' +'0' + str(idx)+ img_name_num[0]+ img_name_num[1] + ".jpg" # MHP mostly .png Other datasets     
         #dest2 = output_labels_addr + '/' + '0' + str(idx)+ img_name_num[0]+ img_name_num[1] + ".json"
+        
         dest1 = output_images_addr + '/' + '0'+ str(idx) + img_name + ".png" # For STB
         dest2 = output_labels_addr + '/' + '0'+ str(idx) + img_name + ".json" # For STB
+        
+        # Just in ann order to make it orderly
+        #dest1 = output_images_addr + '/' + str(counter) + ".png" # For STB
+        #dest2 = output_labels_addr + '/' + str(counter) + ".json" # For STB
         print("Img name", img_name)
         
         if os.path.exists(src1):
@@ -151,4 +172,5 @@ for idx, dset_path in enumerate(dataset_images_addrs):
 
             shutil.copy(src1, dest1)
             shutil.copy(src2, dest2)
+            #assert False
             pass               

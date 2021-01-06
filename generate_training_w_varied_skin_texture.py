@@ -15,17 +15,25 @@ from scipy import ndimage
 import random
 from skimage import exposure
 
-input_img_folder = "/data3/datasets/mano_bg_like_24_with_depth_convertible_masks_without_bg_24e/TRAIN/images/"
-input_mask_folder = "/data3/datasets/mano_bg_like_24_with_depth_convertible_masks_without_bg_24e/TRAIN/masks_without_shadow/"
+input_img_folder = "/data3/datasets/mano_like_24d_more_images_with_shape_24nd/TRAIN/images/"
+input_mask_folder = "/data3/datasets/mano_like_24d_more_images_with_shape_24nd/TRAIN/masks_without_shadow/"
 
-output_img_folder = "/data3/datasets/mano_bg_hand_fixed_three_tex_24l/TRAIN/images3/"
+output_img_folder = "/data3/datasets/mano_like_24d_more_images_with_shape_base_with_tex_24ndnf/TRAIN/images/"
 
 imagenet_dir = glob.glob("/media/shalini/datapart/datasets/ILSVRC2012_img_test/*.JPEG") # Imagenet directory
+
+def process_mask_for_bg(gt_mask):
+    gt_mask[gt_mask == 0] = 1
+    return gt_mask
 
 def seg_using_gt_mask(img, gt_mask):   
     gt_mask = add_random_texture_to_mask(gt_mask)
     img = img/255.0
-    final = img*gt_mask
+    preserve_bg_mask = process_mask_for_bg(gt_mask)
+    final = img*preserve_bg_mask
+    #final = img*gt_mask # This is for removal of bG
+    
+    #final = img
     #print("img", img[150:200, 250:300, 0])
     #print("gt", gt_mask[150:200, 250:300, 0])
     #print(np.amax(final, axis=0))
@@ -34,19 +42,21 @@ def seg_using_gt_mask(img, gt_mask):
     # Equalization
     img_eq = exposure.equalize_hist(final)
 
-    # Adaptive Equalization
+    # Adaptive Equalization : For background with texture, comment the stuff here
     img_adapteq = exposure.equalize_adapthist(final, clip_limit=0.2)
     img_adapteq = img_adapteq*gt_mask
     final = final*255.0
     img_eq = img_eq*255.0
     img_adapteq = img_adapteq*255.0
     img_adapteq = img_adapteq*gt_mask
+    
+    
+    #plt.figure()
+    #io.imshow(img)
     #plt.figure()
     #io.imshow(final)
     #plt.figure()
-    #io.imshow(final_grabcut)
-    #plt.figure()
-    #io.imshow(final)
+    #io.imshow(img_adapteq)
     #io.show()
     #cv2.imwrite("masked.png", final)
     #print(gt_mask)
@@ -109,10 +119,10 @@ def send_valid_img():
     while invalid:
         vert_col_rand = random.sample(imagenet_dir, 1)
         vert_col = cv2.cvtColor(cv2.imread(vert_col_rand[0]), cv2.COLOR_BGR2RGB) # Read image and cvt to RGB
-        print(vert_col.shape)
+        #print(vert_col.shape)
         invalid = all(np.less_equal(vert_col.mean(axis=0).mean(axis=0), np.array([180., 180., 180.])))  
-        print(vert_col.mean(axis=0).mean(axis=0))
-        print(vert_col.shape)
+        #print(vert_col.mean(axis=0).mean(axis=0))
+        #print(vert_col.shape)
         if(invalid is False):
             break
     return vert_col
@@ -121,6 +131,7 @@ def main():
     img_files = [f for f in glob.glob(input_img_folder + "*.png")]
     img_names_ = [f.split("/")[6][:-4] for f in img_files]
     print(img_names_[0])
+    counter = len(img_files)
     for img_name in img_names_:
         img_src = input_img_folder + img_name + ".png"
         input_img = cv2.imread(img_src)
@@ -139,12 +150,14 @@ def main():
         
         #final_img = seg_using_gt_mask(input_img, input_mask)
 
-        #cv2.imwrite(img_dest, final_img) #final_img
+        cv2.imwrite(img_dest, final_img) #final_img, for BG preservation
         #cv2.imwrite(img_dest_eg, img_eq) #final_img
-        cv2.imwrite(img_dest, img_ad_eq) #final_img
+        #cv2.imwrite(img_dest, img_ad_eq) #final_img
+        #cv2.imwrite(output_img_folder + "temp.png", input_img) #final_img
         #cv2.imwrite(mask_dest, resized_mask)
         #cv2.imwrite(output_img_folder+"final.png", resized_img)
-        print("Fin.")
+        print("Countdown.", counter)
+        counter = counter - 1
         #assert False
     pass
 

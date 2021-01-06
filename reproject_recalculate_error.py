@@ -12,10 +12,10 @@ import cv2
 import matplotlib.pyplot as plt
 import time
 
-input_img_folder = "/data3/datasets/mano_arm_imagenet_vert_colour_and_bg_10_b_complete/FreihandsWithoutBg_cleaned_unresized/images/"
-input_labels_folder = "/data3/datasets/mano_arm_imagenet_vert_colour_and_bg_10_b_complete/FreihandsWithoutBg_cleaned_unresized/labels/"
+input_img_folder = "/data3/datasets/FinalDataset/FreihandsTrainDataWithObj/images/"
+input_labels_folder = "/data3/datasets/FinalDataset/FreihandsTrainDataWithObj/labels/"
 
-input_pred ='/data3/datasets/mano_bg_hand_lighting_variation_without_rand_noise_wrap_27e/RESULTS/Finetune_27b27c27_27d27e/freihands_without_chunks/2DPCK.pickle'
+input_pred ='/data3/results/mano_imagenet/logs_finetune24e24d24df24dfj/RESULTS/ManoHandsInference_FreihandsTrainDataWoutObj/2DPCK.pickle'
 acc_thresh = 34  # 34 for frei, 26 for shreyasDS
 tar_w = tar_h = 300
 inp_w = inp_h = 140
@@ -54,8 +54,8 @@ def prediction_accuracy(gt, predictions):
     return acc, tock - tick
 
 def main():
-    img_files = [f for f in glob.glob(input_img_folder + "*.jpg")]
-    img_names_ = [f.split("/")[6][:-4] for f in img_files]
+    img_files = [f for f in glob.glob(input_img_folder + "*.png")]
+    img_names_ = [f.split("/")[-1][:-4] for f in img_files]
     input_img = cv2.imread(img_files[0])
     label_src = input_labels_folder + img_names_[0] + ".json"
     pts2DHand = read_json(label_src)
@@ -65,7 +65,7 @@ def main():
     gt_re = np.array([scaleAug(img_kp, inp_w, inp_h) for img_kp in input_pred_values["gt"]])
     scaled_img = cv2.resize(input_img, (tar_w, tar_h), interpolation = cv2.INTER_CUBIC)
     
-    '''
+    ''' # Bad code
     f, (ax0, ax1, ax2) = plt.subplots(1, 3)
     ax0.imshow(input_img, cmap=plt.cm.gray, interpolation='nearest')
     ax0.scatter(pts2DHand[:, 0], pts2DHand[:, 1], c='b', marker='o')

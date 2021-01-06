@@ -13,11 +13,11 @@ from skimage import io
 import matplotlib.pyplot as plt
 from scipy import ndimage
 
-input_img_folder = "/data3/datasets/mano_hand_green_bg_28/TOTAL/images/"
+input_img_folder = "/data3/datasets/mano_like_24d_more_images_with_shape_24nd/TRAIN/images/"
 
-input_mask_folder = "/data3/datasets/mano_hand_green_bg_28/TOTAL/masks_without_shadow/"
+input_mask_folder = "/data3/datasets/mano_like_24d_more_images_with_shape_24nd/TRAIN/masks_without_shadow/"
 
-output_img_folder = "/data3/datasets/mano_hand_green_bg_seg_png_28c/TRAIN/images/"
+output_img_folder = "/data3/datasets/mano_like_24d_more_images_with_shape_base_24ne/TRAIN/images/"
 
 def seg_using_gt_mask(img, gt_mask):   
     
@@ -87,8 +87,9 @@ def remove_mask_border(mask):
 
 def main():
     img_files = [f for f in glob.glob(input_img_folder + "*.png")]
-    img_names_ = [f.split("/")[6][:-4] for f in img_files]
+    img_names_ = [f.split("/")[-1][:-4] for f in img_files]
     print(img_names_[0])
+    counter = len(img_files)
     for img_name in img_names_:
         img_src = input_img_folder + img_name + ".png"
         input_img = cv2.imread(img_src)
@@ -108,7 +109,8 @@ def main():
         cv2.imwrite(img_dest, final_img) #final_img
         #cv2.imwrite(mask_dest, resized_mask)
         #cv2.imwrite(output_img_folder+"final.png", resized_img)
-        print("Fin.", img_name)
+        print("Countdown.", counter)
+        counter = counter - 1
         #assert False
     pass
 

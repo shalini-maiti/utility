@@ -26,10 +26,11 @@ f= [607.92271, 607.88192]
 #c=[336.41179, 238.77962]
 #c = [318.47345, 250.31296]
 #f = [822.79041, 822.79041]
-input_labels = "/data3/datasets/STB/labels/B1Counting_SK.mat"
-input_img_folder = "/data3/datasets/STB/B1Counting/"
-output_labels_folder = "/data3/datasets/STB/B1CountingLabels/"
-img_filename_filter = '/data3/datasets/STB/B1Counting/SK_color_{}.png'
+input_labels = "/data3/datasets/STB/labels/B3Counting_SK.mat"
+input_img_folder = "/data3/datasets/STB/B3Counting/"
+output_labels_folder = "/data3/datasets/STB/newB3CountingLabels/"
+img_filename_filter = '/data3/datasets/STB/B3Counting/SK_color_{}.png'
+
 
 def project_3d_to_2d(rt, t_vec, f, global_coord, c=np.zeros((2,1))):
     pixel_coord = np.zeros((3,1))
@@ -121,5 +122,6 @@ def main():
         cv2.imshow("image", img_data)
         cv2.waitKey(1)
         save_to_json(new_pos, i, output_labels_folder)
+        
         #assert False
 main()

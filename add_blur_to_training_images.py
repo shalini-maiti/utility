@@ -13,9 +13,9 @@ from skimage import io
 import matplotlib.pyplot as plt
 from scipy import ndimage
 
-input_img_folder = "/data3/datasets/mano_bg_hand_lighting_variation_without_bg_27b/TRAIN/images/"
+input_img_folder = "/data3/datasets/mano_like_24d_more_images_with_shape_base_with_tex_and_bg_24ndnf/TRAIN/images/"
 
-output_img_folder = "/data3/datasets/mano_bg_hand_lighting_variation_without_bg_blur_27d/TRAIN/images/"
+output_img_folder = "/data3/datasets/mano_like_24d_more_images_with_shape_base_with_tex_bg_and_blur_24ndnfnj/TRAIN/images/"
 
 def blur_image(img):   
     final =  cv2.GaussianBlur(img,(5,5),0)
@@ -26,6 +26,7 @@ def main():
     img_files = [f for f in glob.glob(input_img_folder + "*.png")]
     img_names_ = [f.split("/")[6][:-4] for f in img_files]
     print(img_names_[0])
+    counter = len(img_files)
     for img_name in img_names_:
         img_src = input_img_folder + img_name + ".png"
         input_img = cv2.imread(img_src)
@@ -41,7 +42,8 @@ def main():
 
         cv2.imwrite(img_dest, final_img) #final_img
 
-        print("Fin.", img_name)
+        print("Fin.", counter)
+        counter = counter - 1
         #assert False
     pass
 

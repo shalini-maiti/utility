@@ -16,9 +16,9 @@ import cv2
 
 # For freihands seg masks corresponding to the test images
 
-input_fil_dir='/data3/datasets/FreiHAND_pub_v2/FreihandsTrainData/images_with_obj/'
-corresponding_file_dir = '/data3/datasets/FreiHAND_pub_v2/FreihandsTrainData/labels/'
-output_folder = '/data3/datasets/FreiHAND_pub_v2/FreihandsTrainData/labels_w_obj/'
+input_fil_dir='/data3/datasets/FinalDataset/validationSet/images/'
+corresponding_file_dir = '/data3/datasets/FinalDataset/STBCountingAll/labels/'
+output_folder = '/data3/datasets/FinalDataset/validationSet/labels/'
 
 '''
 input_fil_dir='/data3/datasets/freihands_cleaned/images/'

@@ -21,12 +21,12 @@ from scipy import ndimage
 from skimage.measure import label   
 import skimage
 
-input_img_folder = "/data3/datasets/FreiHAND_pub_v2/FreihandsTrainData/images/"
-input_label_folder = "//data3/datasets/FreiHAND_pub_v2/FreihandsTrainData/labels/"
+input_img_folder = "/data3/datasets/FreiHAND_pub_v2/FreihandsEvalDataset/from_evaluation/FreihandsEvalFinalWoutObj/images/"
+input_label_folder = "/data3/datasets/FreiHAND_pub_v2/FreihandsEvalDataset/from_evaluation/FreihandsEvalFinalWoutObj/labels/"
 #input_mask_folder = "/data3/datasets/freihands_cleaned/masks/"
 
-output_img_folder = "/data3/datasets/FreiHAND_pub_v2/FreihandsTrainData/images_resized/"
-output_label_folder = "/data3/datasets/FreiHAND_pub_v2/FreihandsTrainData/labels_resized/"
+output_img_folder = "/data3/datasets/FreiHAND_pub_v2/FreihandsEvalDataset/from_evaluation/FreihandsEvalFinalWoutObj/resized_images/"
+output_label_folder = "/data3/datasets/FreiHAND_pub_v2/FreihandsEvalDataset/from_evaluation/FreihandsEvalFinalWoutObj/resized_labels/"
 #output_mask_folder = "/data3/datasets/freihands_cleaned/masks_pre/"
 
 resultant_width = 640
@@ -199,7 +199,7 @@ def remove_small_components(img):
 
 def main():
     json_files = [f for f in glob.glob(input_label_folder + "*.json")]
-    img_names_ = [f.split("/")[7][:-5] for f in json_files]
+    img_names_ = [f.split("/")[-1][:-5] for f in json_files]
     print(json_files[0])
     print(img_names_[0])
     for img_name in img_names_:
