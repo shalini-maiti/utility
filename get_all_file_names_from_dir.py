@@ -1,16 +1,14 @@
+'''
+Get all the names of files in a folder to a text file.
+Useful for training purposes.
+
+'''
 import os
-import sys
-import glob
-import shutil
-import numpy as np
 
 # Use json folder(labels ) to get the list from directory
 
-file_list_imgs = '/data3/datasets/mano_like_24d_more_images_with_shape_base_24ne/TRAINRight.txt'
-labels_folder = '/data3/datasets/mano_like_24d_more_images_with_shape_base_24ne/TRAIN/labels/'
-
-#img_folder = '/home/shalini/Downloads/trial/labels'
-#file_list_imgs = '/home/shalini/Downloads/TESTRight_rand.txt'
+file_list_imgs = ' ' # Output text file
+labels_folder = ' ' # Input labels folder
 
 
 f = open(file_list_imgs, 'a')

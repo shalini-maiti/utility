@@ -4,6 +4,8 @@
 Created on Fri Aug 14 16:04:09 2020
 
 @author: shalini
+
+Convert labels from pickle to json format
 """
 
 import glob
@@ -20,12 +22,12 @@ def convert_to_json(label_arr, dest):
     print(json_file)
     #print(len(sp[1:]))
     label_dict['hand_pts'] = (np.array(label_arr['KPS2D']).reshape(21,2)).tolist() # Invert y, x to x, y
-    
+
     label_dict['is_left'] = 0
     g = open(json_file, 'w')
     json.dump(label_dict, g)
     return label_dict
-    
+
 def main():
     lables_input_files = [f for f in glob.glob(input_label_folder + "*.pickle")]
     label_names_ = [f.split("/")[8][:-7] for f in lables_input_files]
@@ -36,5 +38,5 @@ def main():
         label_dest = output_json_folder + label_name + ".json"
         lable = convert_to_json(input_label, label_dest)
     pass
-    
+
 main()

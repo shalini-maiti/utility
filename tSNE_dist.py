@@ -5,61 +5,29 @@ Created on Fri Jul 17 00:12:37 2020
 
 @author: shalini
 """
-# That's an impressive list of imports.
+
 import numpy as np
-from numpy import linalg
-from numpy.linalg import norm
-from scipy.spatial.distance import squareform, pdist
 import json
 import glob
-#import tqdm
 import cv2
-
-# We import sklearn.
-import sklearn
 from sklearn.manifold import TSNE
-from sklearn.datasets import load_digits
-from sklearn.preprocessing import scale
-
-# We'll hack a bit with the t-SNE code in sklearn 0.15.2.
-from sklearn.metrics.pairwise import pairwise_distances
-from sklearn.manifold.t_sne import (_joint_probabilities,
-                                    _kl_divergence)
-#from sklearn.utils.extmath import _ravel
-# Random state.
-RS = 20150101
-
-# We'll use matplotlib for graphics.
 import matplotlib.pyplot as plt
-import matplotlib.patheffects as PathEffects
-import matplotlib
-from mpl_toolkits.mplot3d import Axes3D
-import time
 import random
 import imutils
 
-# We import seaborn to make nice plots.
-import seaborn as sns
+our_labels= " " # Data folder 1
+freihands_no_chunks_labels = " " # Data folder 2
+freihands_train_labels = " " # Data folder 3
+shreyas_ds_labels = " " # Data folder 4
+stb_random_labels = " " # Data folder 5
+stb_counting_labels = " " # Data folder 6
+mhp_10k_labels = " " # Data folder 7
+mhp_10k_aug_labels = " " # Data folder 8
+RS = 20150101
 
-# We'll generate an animation with matplotlib and moviepy.
-#from moviepy.video.io.bindings import mplfig_to_npimage
-#import moviepy.editor as mpy
-
-#digits = load_digits()
-#print(digits.data.shape) 
-
-our_labels= "/data3/datasets/mano_like_24d_more_images_with_shape_24nd/TRAIN/labels/"
-freihands_no_chunks_labels = "/data3/datasets/FinalDataset/freihands_no_chunks/labels/"
-freihands_train_labels = "/data3/datasets/FinalDataset/FreihandsTrainDataWoutObj/labels/"
-shreyas_ds_labels = "/data3/datasets/FinalDataset/ho3d_qualitative/labels/"
-stb_random_labels = "/data3/datasets/FinalDataset/STBRandomAll/labels/"
-stb_counting_labels = "/data3/datasets/FinalDataset/STBCountingAll/labels/"
-mhp_10k_labels = "/data3/datasets/FinalDataset/MultiviewHandPose10k/labels/"
-mhp_10k_aug_labels = "/data3/datasets/FinalDataset/MultiviewHandPoseAugmented10K/labels/"
-
-#aug_labels="/data3/datasets/mano_bg_fixed_all_with_arm_25/TRAIN/labels_aug/"
-our_image_folder = "/data3/datasets/mano_bg_like_24_with_depth_convertible_masks_24d/TRAIN/images/"
-#print(len(images))
+# If you need to rearrange the distribution of the points, do so here.
+# In my case, the sequence of the joints is different for some datasets, so
+# I have to rearrange those joints.
 
 jointsMap = [0,
             13, 14, 15, 16,
@@ -67,6 +35,7 @@ jointsMap = [0,
             4, 5, 6, 18,
             10, 11, 12, 19,
             7, 8, 9, 20]
+
 multiviewJointsMap = [20,
                       17, 19, 18, 16,
                       1, 3, 2, 0,
@@ -74,35 +43,18 @@ multiviewJointsMap = [20,
                       13, 15, 14, 12,
                       9,11, 10, 8]
 
-def prep_and_transform_img(our_images, freihands_images):
-    all_images = []    
-    im_stuff = []
-    # Load image data
-    for f in our_images:
-        new_image = cv2.imread(f)
-        all_images.append(np.ndarray.flatten(new_image))
-        im_stuff.append([0])
-    
-    for f in freihands_images:
-        new_image = cv2.imread(f)
-        all_images.append(np.ndarray.flatten(new_image))
-        im_stuff.append([1])
-    #print(X.shape, y.shape)
-    
-    pass
-
-def prep_and_transform(our_json_files, frei_no_chunk_json_files, ds_json_files, 
-                      input_img, minScale, maxScale, minRot, maxRot, 
-                      stb_random_json_files, mhp_10k_json_files, 
+def prep_and_transform(our_json_files, frei_no_chunk_json_files, ds_json_files,
+                      minScale, maxScale, minRot, maxRot,
+                      stb_random_json_files, mhp_10k_json_files,
                       frei_train_json_files, stb_counting_json_files,
-                      mhp_10k_aug_json_files, tsne_comp):
+                      mhp_10k_aug_json_files, tsne_comp, input_img=np.zeros(480, 640)):
     all_label_data = []
     y = []
     js_stuff = []
-    
+
     (r, c, d) = input_img.shape
     center = np.array([c/2, r/2])
-    
+
     y=0
     for x in range(1):
         for j_file in our_json_files:
@@ -112,7 +64,7 @@ def prep_and_transform(our_json_files, frei_no_chunk_json_files, ds_json_files,
                 pts2DHand = np.array(dat['hand_pts'], dtype='f')
                 rotPts2d, rot_Img = rotAug(input_img, pts2DHand, minRot, maxRot, center)
                 scaled_2d, scaled_img = scaleAug(rot_Img, rotPts2d, minScale, maxScale)
-                
+
                 '''
                 f, (ax0, ax1, ax2) = plt.subplots(1, 3)
                 ax0.imshow(input_img, cmap=plt.cm.gray, interpolation='nearest')
@@ -128,9 +80,9 @@ def prep_and_transform(our_json_files, frei_no_chunk_json_files, ds_json_files,
                 js_stuff.append([0])
                 y = y + 1
                 print(y)
-                
-                
-    '''
+
+
+
     for j_file in frei_no_chunk_json_files:
         with open(j_file, 'r') as f:
             dat = json.load(f)
@@ -138,8 +90,7 @@ def prep_and_transform(our_json_files, frei_no_chunk_json_files, ds_json_files,
             #all_target_data.append(jointsMap)
             all_label_data.append(pts2DHand[0:])  # [1: ] To forget the wrist joint
             js_stuff.append([1])
-   '''         
-    '''
+
     for j_file in ds_json_files:
         with open(j_file, 'r') as f:
             dat = json.load(f)
@@ -147,8 +98,7 @@ def prep_and_transform(our_json_files, frei_no_chunk_json_files, ds_json_files,
             #all_target_data.append(jointsMap)
             all_label_data.append(pts2DHand[0:])  # [1: ] To forget the wrist joint
             js_stuff.append([7])
-    '''
-    '''
+
     for j_file in stb_random_json_files:
         with open(j_file, 'r') as f:
             dat = json.load(f)
@@ -156,8 +106,8 @@ def prep_and_transform(our_json_files, frei_no_chunk_json_files, ds_json_files,
             #all_target_data.append(jointsMap)
             all_label_data.append(pts2DHand[0:])  # [1: ] To forget the wrist joint
             js_stuff.append([2])
-    '''
-           
+
+
     for j_file in stb_counting_json_files:
         with open(j_file, 'r') as f:
             dat = json.load(f)
@@ -165,8 +115,8 @@ def prep_and_transform(our_json_files, frei_no_chunk_json_files, ds_json_files,
             #all_target_data.append(jointsMap)
             all_label_data.append(pts2DHand[0:])  # [1: ] To forget the wrist joint
             js_stuff.append([6])
-    
-    '''            
+
+
     for j_file in mhp_10k_json_files:
         with open(j_file, 'r') as f:
             dat = json.load(f)
@@ -174,8 +124,7 @@ def prep_and_transform(our_json_files, frei_no_chunk_json_files, ds_json_files,
             #all_target_data.append(jointsMap)
             all_label_data.append(pts2DHand[multiviewJointsMap][0:])  # [1: ] To forget the wrist joint
             js_stuff.append([3])
-    '''
-    '''
+
     for j_file in frei_train_json_files:
         with open(j_file, 'r') as f:
             dat = json.load(f)
@@ -183,8 +132,7 @@ def prep_and_transform(our_json_files, frei_no_chunk_json_files, ds_json_files,
             #all_target_data.append(jointsMap)
             all_label_data.append(pts2DHand[0:])  # [1: ] To forget the wrist joint
             js_stuff.append([4])
-    '''
-    '''     
+
     for j_file in mhp_10k_aug_json_files:
         with open(j_file, 'r') as f:
             dat = json.load(f)
@@ -192,20 +140,20 @@ def prep_and_transform(our_json_files, frei_no_chunk_json_files, ds_json_files,
             #all_target_data.append(jointsMap)
             all_label_data.append(pts2DHand[multiviewJointsMap][0:])  # [1: ] To forget the wrist joint
             js_stuff.append([5])
-    '''        
+
     all_label_data = np.array(all_label_data)
     all_label_data = all_label_data.reshape(all_label_data.shape[0], -1)
 
-    print(all_label_data.shape) 
+    print(all_label_data.shape)
 
     X = all_label_data
     y = np.array(js_stuff)
     #y = [0]*len(our_json_files) + [1]*len(frei_json_files)
     y = np.reshape(y, (all_label_data.shape[0], ))
     #y = np.concatenate(y, np.ones((len(freihands_images))))
-    #print(X[0], y[0]) 
+    #print(X[0], y[0])
     print(X.shape, y.shape)
-    tsneTransform = TSNE(n_components=tsne_comp, random_state=RS).fit_transform(X) 
+    tsneTransform = TSNE(n_components=tsne_comp, random_state=RS).fit_transform(X)
     print("Tsne", tsneTransform.shape)
 
     np.save("/data3/datasets/mano_bg_like_24_with_depth_convertible_masks_24d/tsnePlot2dModel24d-28.npy", tsneTransform)
@@ -213,26 +161,26 @@ def prep_and_transform(our_json_files, frei_no_chunk_json_files, ds_json_files,
 
 def rotAug(img, kps2D, minAng, maxAng, center=np.array([0, 0])):
     rotAng = random.randint(minAng, maxAng)
-    
+
     theta = np.deg2rad(rotAng)
     tx = img.shape[1]/2
     ty = img.shape[0]/2
-    
+
     S, C = np.sin(theta), np.cos(theta)
-    
+
     # Rotation matrix, angle theta, translation tx, ty
     H = np.array([[C, -S, tx],
                   [S,  C, ty],
                   [0,  0, 1]])
-    
+
     # Translation matrix to shift the image center to the origin
     r, c, d = img.shape
     pts2DHand = np.array(kps2D)
 
-    
+
     img_rot = imutils.rotate(img, rotAng)
     labels_rot = np.array([rotate(x, [tx, ty], rotAng) for x in pts2DHand])
-    
+
     return labels_rot, img_rot
 
 def rotate(point, origin, degrees):
@@ -250,7 +198,7 @@ def rotate(point, origin, degrees):
 def scaleAug(img, kps2d, minScale, maxScale):
     (h, w, d) = img.shape
     w = float(w)
-    h = float(h)    
+    h = float(h)
     center = np.array([w/2, h/2])
     scaleVal = random.uniform(minScale, maxScale)
     #print("scaleVal", scaleVal)
@@ -258,7 +206,7 @@ def scaleAug(img, kps2d, minScale, maxScale):
     (h_n, w_n, d_n) = scaled_img.shape
     center_new = np.array([w_n/2, h_n/2])
     scaled_2d = (kps2d + center)*scaleVal - center_new
-    
+
     return scaled_2d, scaled_img
 
 def read_json(j_file):
@@ -273,8 +221,8 @@ def read_json(j_file):
 def scatter_2d(x, colors, len_our_json_files):
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    
-    
+
+
     ax.scatter(x[colors ==0, 0], x[colors == 0, 1], c='crimson', marker='o', label="Base dataset w/ shape variation (30k)") # Ours
     #ax.scatter(x[colors ==1 , 0], x[colors == 1, 1], c='turquoise', marker='^', label="Freihands Segmented Training Data (788)") #Frei
     #ax.scatter(x[colors ==2 , 0], x[colors == 2, 1], c='tomato', marker='*', label="STB Random (9k)") #HO3D
@@ -283,10 +231,10 @@ def scatter_2d(x, colors, len_our_json_files):
     #ax.scatter(x[colors ==5 , 0], x[colors == 5, 1], c='darkgray', marker='H', label="Large-scale Multiview 3D Hand Pose With Augmented BG (10k)") #STB
     ax.scatter(x[colors ==6 , 0], x[colors == 6, 1], c='mediumslateblue', marker='H', label="STB Counting (9k)") #STB
     #ax.scatter(x[colors ==7 , 0], x[colors == 7, 1], c='lightseagreen', marker='H', label="Ho-3D DS (267)") #STB
-    
+
     #ax.scatter(x[len_our_json_files:-1, 0], x[len_our_json_files:-1, 1],  c='b', marker='^')
     #ax.scatter(x[0:len_our_json_files, 0], x[0:len_our_json_files, 1],  c='r', marker='o')
-    
+
     #ax.set_xlim(-50, 50)
     #ax.set_ylim(-50, 50)
     #ax.set_zlim(-50, 50)
@@ -294,14 +242,14 @@ def scatter_2d(x, colors, len_our_json_files):
     ax.set_ylabel('Y Label')
     ax.legend()
     #ax.set_zlabel('Z Label')
-    
+
     plt.show()
     return plt
 def scatter_3d(x, colors, len_our_json_files):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    
-   
+
+
     #ax.scatter(x[colors ==1 , 0], x[colors == 1, 1], x[colors ==1, 2], c='turquoise', marker='^', label="Freihands Segmented Training Data (788)") #Frei
     #ax.scatter(x[colors ==2 , 0], x[colors == 2, 1], x[colors ==2, 2], c='tomato', marker='*', label="STB Random Dataset (9k)") #HO3D
     #ax.scatter(x[colors ==3 , 0], x[colors == 3, 1], x[colors ==3, 2], c='darkolivegreen', marker="4", label="MultiviewHandPose (10k)") #STB
@@ -320,10 +268,10 @@ def scatter_3d(x, colors, len_our_json_files):
     ax.set_ylabel('Y Label')
     ax.set_zlabel('Z Label')
     ax.legend()
-    
+
     plt.show()
     pass
-    
+
 def main():
     minScale = 0.6
     maxScale = 1.4
@@ -338,8 +286,9 @@ def main():
     ds_json_files = [f for f in glob.glob(shreyas_ds_labels + "*.json")]
     stb_random_json_files = [f for f in glob.glob(stb_random_labels + "*.json")]
     stb_counting_json_files = [f for f in glob.glob(stb_counting_labels + "*.json")]
-    mhp_10k_json_files = [f for f in glob.glob(mhp_10k_labels + "*.json")] 
+    mhp_10k_json_files = [f for f in glob.glob(mhp_10k_labels + "*.json")]
     mhp_10k_aug_json_files = [f for f in glob.glob(mhp_10k_aug_labels + "*.json")]
+
     '''
     tsne2d = np.load("/data3/datasets/mano_bg_fixed_all_with_arm_25/tsnePlot2d_freihandsVsModel24d.npy")
     y = [0]*len(our_json_files[0:10000]) + [1]*len(frei_json_files)
@@ -353,73 +302,21 @@ def main():
     freihands_images =  [f for f in glob.glob(freihands_img_folder + "*.jpg")]
     our_images = [f for f in glob.glob(our_image_folder + "*.png")]
     '''
-    
+
     #img_files = [f for f in glob.glob(input_img_folder + "*.png")]
     #img_names_ = [f.split("/")[6][:-4] for f in img_files][20]
-    img_src = [f for f in glob.glob(our_image_folder + "*.png")][0]
-    print(img_src)
-    input_img = cv2.imread(img_src)
-    
-    tsneTransform, y = prep_and_transform(our_json_files, frei_no_chunk_json_files, ds_json_files, 
-                                              input_img, minScale, maxScale, minRot, maxRot, 
-                                              stb_random_json_files, mhp_10k_json_files, 
+
+    tsneTransform, y = prep_and_transform(our_json_files, frei_no_chunk_json_files, ds_json_files,
+                                              minScale, maxScale, minRot, maxRot,
+                                              stb_random_json_files, mhp_10k_json_files,
                                               frei_train_json_files, stb_counting_json_files,
                                               mhp_10k_aug_json_files, tsne_comp)
     if tsne_comp == 2:
         scatter_2d(tsneTransform, y, len(our_json_files[0:10000]))
     elif tsne_comp == 3:
         scatter_3d(tsneTransform, y, len(our_json_files[0:10000]))
-    '''
-    f, (ax0, ax1, ax2) = plt.subplots(1, 3)
-    ax0.imshow(input_img, cmap=plt.cm.gray, interpolation='nearest')
-    ax0.scatter(pts2DHand[:, 0], pts2DHand[:, 1], c='b', marker='o')
-    ax1.imshow(rot_Img, cmap=plt.cm.gray, interpolation='nearest')
-    ax1.scatter(rotPts2d[:, 0], rotPts2d[:, 1], c='b', marker='o')
-    ax2.imshow(scaled_img, cmap=plt.cm.gray, interpolation='nearest')
-    ax2.scatter(scaled_2d[:, 0], scaled_2d[:, 1], c='b', marker='o')
-    plt.show()
-    '''
+
     assert False
 
-main()
-#f, ax, sc, txts = scatter(digits_proj, y)
-
-
-'''
-def scatter(x, colors):
-    # We choose a color palette with seaborn.
-    palette = np.array(sns.color_palette("hls", 2))
-
-    # We create a scatter plot.
-    fig = plt.figure()
-    ax = plt.subplot(aspect='equal')
-    #ax = plt.add_subplot(111, projection='3d')
-    #ax = Axes3D(fig)
-    #ax.set_xlim(-500, 500)
-    #ax.set_ylim(-500, 500)
-    #ax.set_zlim(-500,500)
-    sc = ax.scatter(x[:,0], x[:,1], lw=0, s=40,
-                    c=palette[colors.astype(np.int)])
-    plt.xlim(0, 500)
-    plt.ylim(0,500)
-
-    ax.axis('off')
-    ax.axis('tight')
-
-    # We add the labels for each digit.
-    txts = []
-    for i in range(2):
-        # Position of each label.
-        xtext, ytext = np.median(x[colors == i, :], axis=0)
-        txt = ax.text(xtext, ytext, str(i), fontsize=24)
-        txt.set_path_effects([
-            PathEffects.Stroke(linewidth=5, foreground="w"),
-            PathEffects.Normal()])
-        txts.append(txt)
-        
-    plt.show()
-    
-    plt.savefig('digits_tsne-generated.png', dpi=120)
-
-    return fig, ax, sc, txts
-'''
+if __name__ == "__main__":
+    main()

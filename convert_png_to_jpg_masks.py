@@ -8,8 +8,8 @@ Created on Wed Jul 29 16:22:54 2020
 import cv2
 import glob
 
-input_png = '/data3/datasets/mano_hand_green_bg_28/TRAIN/masks_without_shadow/'
-output_jpg = '/data3/datasets/mano_hand_green_bg_28/TRAIN/masks_without_shadow_jpgs/'
+input_png = ' ' # Address of the input image folder
+output_jpg = ' ' # Address of the output image folder
 
 img_files = [f for f in glob.glob(input_png + "*.png")]
 img_names_ = [f.split("/")[6][:-4] for f in img_files]

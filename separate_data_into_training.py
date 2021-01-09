@@ -1,3 +1,7 @@
+'''
+Split a dataset into testing and training datasets.
+'''
+
 import os
 import sys
 import glob
@@ -5,22 +9,18 @@ import shutil
 import numpy as np
 import random
 
-json_files_path = "/data3/datasets/mano_arm_imagenet_vert_colour_and_bg_10_b_complete/TOTAL/labels/"
-image_files_path = "/data3/datasets/mano_arm_imagenet_vert_colour_and_bg_10_b_complete/TOTAL/images/"
+json_files_path = " " # Total input labels folder
+image_files_path = " " # Total input images folder
 
 
-output_test_img_path = "/data3/datasets/mano_arm_imagenet_vert_colour_and_bg_10_b_complete/TEST/images/"
-output_test_json_path = "/data3/datasets/mano_arm_imagenet_vert_colour_and_bg_10_b_complete/TEST/labels/"
+output_test_img_path = " " # Output Test images folder
+output_test_json_path = " " # Output Test labels folder
 
-output_train_img_path = "/data3/datasets/mano_arm_imagenet_vert_colour_and_bg_10_b_complete/TRAIN/images/"
-output_train_json_path = "/data3/datasets/mano_arm_imagenet_vert_colour_and_bg_10_b_complete/TRAIN/labels/"
+output_train_img_path = " " # Output Training images folder
+output_train_json_path = " " # Output Training labels folder
 
 total_number = 49200
 train_number = 48500
-#total_number = 62000
-#train_number = 62000
-#total_number = 93000
-#train_number = 93000
 
 test_number = total_number - train_number
 
@@ -81,4 +81,3 @@ for img_name in img_names_test:
         #shutil.move(src2, dest1)
         shutil.copy(src1, dest1)
         shutil.copy(src2, dest2)
-    

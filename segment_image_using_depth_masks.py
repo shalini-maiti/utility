@@ -9,13 +9,13 @@ import numpy as np
 import png
 import cv2
 import glob
-from scipy import ndimage
 
-input_mask_folder = "/data3/Segmentation/images/releaseTest/segmentation/4/visualization/"
-input_depth_folder = "/data3/datasets/ShreyasDataset/depth/4/"
-output_mask_folder= "/data3/datasets/ShreyasDataset/CPMHand/segmentation_masks/4/"
-input_img_folder = "/data3/datasets/ShreyasDataset/CPMHand/segmented_img/4_/"
-output_img_folder = "/data3/datasets/ShreyasDataset/CPMHand/segmented_img/4/"
+
+input_mask_folder = " " # Address of the input mask folder
+input_depth_folder = " " # Address of the input depth folder
+output_mask_folder= " " # Address of the output mask folder
+input_img_folder = " " # Address of the input image folder
+output_img_folder = " " # Address of the output image folder
 
 try:
     from itertools import imap
@@ -30,11 +30,11 @@ def load_depth(path):
         # Display the noise image
     #cv2.imshow('depth', im)
     #cv2.waitKey(0)
-    
+
     return im
 
-def seg_using_gt_mask(img, gt_mask):   
-    
+def seg_using_gt_mask(img, gt_mask):
+
     '''
     thresholded = gt_mask > 50
     labels = label(thresholded, connectivity=1)
@@ -49,7 +49,7 @@ def seg_using_gt_mask(img, gt_mask):
     print("**************************************************************************8")
     #print(sorted(gt_mask[:,:, 2].flatten()))
     final = img*gt_mask
-    
+
     return final
 
 def gen_clean_mask(old_mask, new_mask):
@@ -67,12 +67,12 @@ def main():
         mask_dest = output_mask_folder + img_name + "_prediction.png"
         #img_dest_eg = output_img_folder + img_name + "_eq"+ ".png"
         #img_dest_adeg = output_img_folder + img_name + "_adeq"+ ".png"
-        
+
         img_src = input_img_folder + img_name + ".png"
         input_img = cv2.imread(img_src)
         img_dest = output_img_folder + img_name + ".png"
         depth_src = input_depth_folder +  img_name + ".png"
-        
+
         #input_depth = cv2.imread(depth_src)
         depth_image = load_depth(depth_src)
         depth_image = depth_image < 700
@@ -89,18 +89,18 @@ def main():
         final_green_mask = final_mask[:, :, 1]
         #final_green_mask = final_green_mask/255.
         final_mask = np.repeat(final_green_mask[:, :, np.newaxis], 3, axis=2)
-       
+
         #print(sorted(final_mask.flatten()))
-        
+
         final_clean_img = seg_using_gt_mask(input_img, final_mask)
-        
+
         #cv2.imshow("input", final_green_mask)
         cv2.imwrite(img_dest, final_clean_img)
         #cv2.imwrite(img_dest, final_img) #final_img
         #cv2.imwrite(img_dest_eg, img_eq) #final_img
-        
+
         #cv2.imwrite(img_dest, img_ad_eq) #final_img
-        
+
         cv2.imwrite(mask_dest, final_mask*255)
         #cv2.imwrite(output_img_folder+"final.png", resized_img)
         print("Fin.")

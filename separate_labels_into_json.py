@@ -1,5 +1,9 @@
-import os
-import glob
+'''
+
+Read hand labels from a text file and save them to
+a json file after inverting y and x coordinates.
+
+'''
 import numpy as np
 import json
 
@@ -15,7 +19,7 @@ for line in f:
     print(json_file)
     #print(len(sp[1:]))
     label_dict['hand_pts'] = (np.array(sp[1:]).reshape(21,2))[:, [1, 0]].tolist() # Invert y, x to x, y
-    
+
     label_dict['is_left'] = 0
     g = open(labels_folder + json_file, 'w')
     json.dump(label_dict, g)

@@ -13,11 +13,11 @@ from skimage import io
 import matplotlib.pyplot as plt
 from scipy import ndimage
 
-input_img_folder = "/data3/datasets/mano_like_24d_more_images_with_shape_base_with_tex_and_bg_24ndnf/TRAIN/images/"
+input_img_folder = " " # Insert address of the input image folder
 
-output_img_folder = "/data3/datasets/mano_like_24d_more_images_with_shape_base_with_tex_bg_and_blur_24ndnfnj/TRAIN/images/"
+output_img_folder = " " # Insert address of the output image folder
 
-def blur_image(img):   
+def blur_image(img):
     final =  cv2.GaussianBlur(img,(5,5),0)
     return final
 
@@ -36,8 +36,8 @@ def main():
             #cv2.circle(resized_img, (pts2DHand[row, 0], pts2DHand[row, 1]), 5, (255, 255, 0), thickness=1, lineType=8, shift=0)
             #cv2.circle(resized_mask, (pts2DHand[row, 0], pts2DHand[row, 1]), 5, (255, 255, 0), thickness=1, lineType=8, shift=0)
         final_img = blur_image(input_img)
-        
-        
+
+
         #final_img = seg_using_gt_mask(input_img, input_mask)
 
         cv2.imwrite(img_dest, final_img) #final_img
@@ -48,4 +48,3 @@ def main():
     pass
 
 main()
-    

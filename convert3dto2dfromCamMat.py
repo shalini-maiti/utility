@@ -4,6 +4,8 @@
 Created on Fri Oct  2 15:03:53 2020
 
 @author: shalini
+
+Used to convert 3D ground truth labels from the STB Counting Datasets.
 """
 import os
 import json
@@ -16,16 +18,10 @@ import scipy.io
 
 
 rot_mat= cv2.Rodrigues(np.array([0.00531, -0.01196, 0.00301]))[0]
-#rot_mat= np.eye(3)
-#trans= [24.0381,  0.4563,   1.2326]
 trans= [-24.0381,  -0.4563,   -1.2326]
-#trans=[0., 0., 0.]
 c=[314.78337, 236.42484]
 f= [607.92271, 607.88192]
-#f= [475.62768, 474.77709]
-#c=[336.41179, 238.77962]
-#c = [318.47345, 250.31296]
-#f = [822.79041, 822.79041]
+
 input_labels = "/data3/datasets/STB/labels/B3Counting_SK.mat"
 input_img_folder = "/data3/datasets/STB/B3Counting/"
 output_labels_folder = "/data3/datasets/STB/newB3CountingLabels/"
@@ -55,23 +51,23 @@ def project_3d_to_2d(rt, t_vec, f, global_coord, c=np.zeros((2,1))):
     #print(pixel_coord.shape)
     pixel_coord = pixel_coord.reshape(4, 1)[:3, :]
     pixel_coord = np.dot(K, pixel_coord)
-    
+
    # print("pixel_coord", str(pixel_coord))
     x_2d = pixel_coord[0] if pixel_coord[2] == 0 else pixel_coord[0]/pixel_coord[2]
     y_2d = pixel_coord[1] if pixel_coord[2] == 0 else pixel_coord[1]/pixel_coord[2]
     #print(x_2d, y_2d)
     #assert False
-    
+
     return x_2d, y_2d
 
 def save_to_json(pos_for_labelling, plot_counter, labelDir):
     label_dict = {}
     json_file = 'SK_color_' + str(plot_counter) + '.json'
-    
+
     print(json_file)
     #print(len(sp[1:]))
     label_dict['hand_pts'] = (pos_for_labelling).tolist()
-    
+
     label_dict['is_left'] = 0
     g = open(labelDir + json_file, 'w')
     json.dump(label_dict, g)
@@ -105,15 +101,15 @@ def main():
 
         #assert False
         coords_3d = hand_details[:, :, i]
-        
+
         for coord in range(coords_3d.shape[1]):
           #print(coord)
-          pos_arr[coord, 0], pos_arr[coord, 1] = project_3d_to_2d(rt=np.array(rot_mat), t_vec=trans, 
+          pos_arr[coord, 0], pos_arr[coord, 1] = project_3d_to_2d(rt=np.array(rot_mat), t_vec=trans,
                                                f=np.array(f), global_coord=coords_3d[:, coord], c=np.array(c))
           pos_for_circle = np.around(pos_arr)
           pos_for_circle = pos_for_circle.astype(int)
           cv2.circle(img_data, (pos_for_circle[ coord, 0], pos_for_circle[coord, 1]), 5, (0, 255, 0), thickness=1, lineType=8, shift=0)
-        
+
 
         new_pos = cal_wrist_coord(pos_arr)
         #cv2.circle(img_data, (new_pos[ 0, 0], new_pos[0, 1]), 5, (0, 255, 0), thickness=1, lineType=8, shift=0)
@@ -122,6 +118,6 @@ def main():
         cv2.imshow("image", img_data)
         cv2.waitKey(1)
         save_to_json(new_pos, i, output_labels_folder)
-        
+
         #assert False
 main()

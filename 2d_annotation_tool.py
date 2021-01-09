@@ -10,13 +10,13 @@ import json
 
 #from matplotlib import mpl_connect, mpl_disconnect
 
-folder_name = "/Users/shalini/Documents/TU_Graz/FourthSemester/Thesis/images/"
+folder_name = " " # Insert the address of the image folder
 activateInteraction = False
 #coords = {str(i): np.array([0, i]) for i in range(21)}
 coords = np.ones((21, 2))
 counter = 0
 fig, ax = plt.subplots()
-json_folder = "/Users/shalini/Documents/TU_Graz/FourthSemester/Thesis/labels/"
+json_folder = "" # Insert the address where the labels should be saved
 image_names = [img for img in glob.glob(folder_name+"*.png")]
 #images = [cv2.imread(img) for img in image_names]
 filecounter = 0

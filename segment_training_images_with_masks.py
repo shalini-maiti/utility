@@ -4,32 +4,30 @@
 Created on Tue Jul 21 23:46:43 2020
 
 @author: shalini
+
+Utility functions to segment the BG from an image using existing masks.
 """
 
 import cv2
 import numpy as np
 import glob
-from skimage import io
-import matplotlib.pyplot as plt
 from scipy import ndimage
 
-input_img_folder = "/data3/datasets/mano_like_24d_more_images_with_shape_24nd/TRAIN/images/"
+input_img_folder = " " # Input input images folder
 
-input_mask_folder = "/data3/datasets/mano_like_24d_more_images_with_shape_24nd/TRAIN/masks_without_shadow/"
+input_mask_folder = " " # Input seg mask folder
 
-output_img_folder = "/data3/datasets/mano_like_24d_more_images_with_shape_base_24ne/TRAIN/images/"
+output_img_folder = " " # Output segmented images folder
 
-def seg_using_gt_mask(img, gt_mask):   
-    
-    
+def seg_using_gt_mask(img, gt_mask):
+
     gt_mask= remove_small_components(gt_mask[:, :, 0])
-    
     #print(gt_mask.shape)
     gt_mask = np.repeat(gt_mask[:, :, np.newaxis], 3, axis=2)
     #print(gt_mask.shape)
     #gt_mask = gt_mask/255
     #mask2 = np.where((gt_mask==0),0,1).astype('uint8')
-    
+
     #binary_img, frgrnd= remove_mask_border_graphcut(gt_mask)
     binary_img = gt_mask > 0.5
 
@@ -49,7 +47,7 @@ def seg_using_gt_mask(img, gt_mask):
     return final
 
 def remove_small_components(img):
-    
+
     #find all your connected components (white blobs in your image)
     nb_components, output, stats, centroids = cv2.connectedComponentsWithStats(img, connectivity=4)
     #connectedComponentswithStats yields every seperated component with information on each of them, such as size
@@ -66,7 +64,7 @@ def remove_small_components(img):
         #print(max(sizes) -sizes[i])
         if sizes[i] >= min_size:
             img_dst[output == i + 1] = 255
-            
+
 
     return img_dst
 
@@ -94,7 +92,7 @@ def main():
         img_src = input_img_folder + img_name + ".png"
         input_img = cv2.imread(img_src)
         img_dest = output_img_folder + img_name + ".png"
-        
+
         mask_src = input_mask_folder +  img_name + ".png"
         input_mask = cv2.imread(mask_src)
 
@@ -102,8 +100,8 @@ def main():
             #cv2.circle(resized_img, (pts2DHand[row, 0], pts2DHand[row, 1]), 5, (255, 255, 0), thickness=1, lineType=8, shift=0)
             #cv2.circle(resized_mask, (pts2DHand[row, 0], pts2DHand[row, 1]), 5, (255, 255, 0), thickness=1, lineType=8, shift=0)
         final_img = seg_using_gt_mask(input_img, input_mask)
-        
-        
+
+
         #final_img = seg_using_gt_mask(input_img, input_mask)
 
         cv2.imwrite(img_dest, final_img) #final_img
@@ -115,4 +113,3 @@ def main():
     pass
 
 main()
-    

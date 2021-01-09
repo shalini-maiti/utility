@@ -4,6 +4,9 @@
 Created on Tue Aug  4 14:13:15 2020
 
 @author: shalini
+
+1. Reproject errror
+2. Calculate prediction accuracy on the basis of a threshold.
 """
 import json
 import glob
@@ -12,13 +15,14 @@ import cv2
 import matplotlib.pyplot as plt
 import time
 
-input_img_folder = "/data3/datasets/FinalDataset/FreihandsTrainDataWithObj/images/"
-input_labels_folder = "/data3/datasets/FinalDataset/FreihandsTrainDataWithObj/labels/"
+input_img_folder = " " # Input images folder
+input_labels_folder = " " # Input labels folder
 
-input_pred ='/data3/results/mano_imagenet/logs_finetune24e24d24df24dfj/RESULTS/ManoHandsInference_FreihandsTrainDataWoutObj/2DPCK.pickle'
-acc_thresh = 34  # 34 for frei, 26 for shreyasDS
-tar_w = tar_h = 300
-inp_w = inp_h = 140
+input_pred = '' # Pickle file containing error calculation for the input images
+acc_thresh = 34  # Prediction accuracy threshold. If err < thresh, prediction is accurate
+
+tar_w = tar_h = 300 # Target height, width for reprojection
+inp_w = inp_h = 140 # Input height, width for reprojection
 
 def scaleAug(kps2d, w, h):
     center = np.array([w/2, h/2])
@@ -41,7 +45,7 @@ def calc_3d_error(gt, predictions):
     projErrs = np.nanmean(np.linalg.norm(gt - predictions, axis=2), axis=1)
     #print((projErrs))
     meanError = np.sum(projErrs, axis=0) / len(projErrs)
-    
+
     return meanError
 
 def prediction_accuracy(gt, predictions):
@@ -59,12 +63,12 @@ def main():
     input_img = cv2.imread(img_files[0])
     label_src = input_labels_folder + img_names_[0] + ".json"
     pts2DHand = read_json(label_src)
-        
+
     input_pred_values = np.load(input_pred, allow_pickle=True)
     est_re = np.array([scaleAug(img_kp, inp_w, inp_h) for img_kp in input_pred_values["est"]])
     gt_re = np.array([scaleAug(img_kp, inp_w, inp_h) for img_kp in input_pred_values["gt"]])
     scaled_img = cv2.resize(input_img, (tar_w, tar_h), interpolation = cv2.INTER_CUBIC)
-    
+
     ''' # Bad code
     f, (ax0, ax1, ax2) = plt.subplots(1, 3)
     ax0.imshow(input_img, cmap=plt.cm.gray, interpolation='nearest')
@@ -73,14 +77,14 @@ def main():
     ax1.scatter(gt_re[0, :, 0], gt_re[0, :, 1], c='b', marker='o')
     ax2.imshow(scaled_img, cmap=plt.cm.gray, interpolation='nearest')
     ax2.scatter(est_re[0, :, 0], est_re[0, :, 1], c='b', marker='o')
-    plt.show()    
+    plt.show()
     '''
     acc, t_taken = prediction_accuracy(input_pred_values["gt"], input_pred_values["est"])
     print("Acc", acc, t_taken)
-    
+
     print(calc_3d_error(gt_re, est_re))
     print(calc_3d_error(input_pred_values["gt"],  input_pred_values["est"]))
-    
+
     '''
     for img_name in img_names_:
         img_src = input_img_folder + img_name + ".png"
@@ -93,10 +97,10 @@ def main():
         center = np.array([c/2, r/2])
         #rotPts2d, rot_Img = rotAug(input_img, pts2DHand, -90, 90, center)
         scaled_2d, scaled_img = scaleAug(input_img, pts2DHand, 1.5, 2.0)
-        
 
 
-    
+
+
         assert False
     '''
 main()
